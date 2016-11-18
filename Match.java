@@ -4,6 +4,8 @@ public class Match {
 	public Match(int t1,int t2){
 		team1=t1;
 		team2=t2;
+		score1=1;
+		score2=2;//DEFAULT SCORES
 	}
 	public int getTeam1(){
 		return team1;
