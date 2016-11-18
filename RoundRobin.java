@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.lang.Math.*;
 import java.util.LinkedList;
 import java.util.Queue;
 /*
@@ -22,7 +23,7 @@ public class RoundRobin {
 	static LinkedList<Integer> idleTeams = new LinkedList<Integer>();
 	
 	public static void main(String[]args){
-		teamQuantity = 4;
+		teamQuantity = 10;
 		matchTracker = new int[teamQuantity][teamQuantity];
 		for(int i = 0;i<teamQuantity;i++){
 			idleTeams.add(i);
@@ -31,11 +32,24 @@ public class RoundRobin {
 			Arrays.fill(matchTracker[i], -1);
 			matchTracker[i][i]=0;
 		}
-		printMatchTracker();
+		//printMatchTracker();
+		printIdleTeamList();
 		checkMatchup();
-		//checkMatchup();
-		testMatchPlay();
+		//printMatchTracker();
+		printIdleTeamList();
+		playMatch(matches,currentMatches);
+		endMatch(oldMatches,currentMatches,0);
+		playMatch(matches,currentMatches);
+		printIdleTeamList();
+		//printMatchTracker();
 		
+	}
+	public static void printIdleTeamList(){
+		System.out.println("IDLE TEAM LIST-------");
+		for(int i=0;i<idleTeams.size();i++){
+			System.out.print(idleTeams.get(i)+" ");
+		}
+		System.out.println("");
 	}
 	public static void printList(LinkedList<Match> mat){
 		if(mat.size()==0){
@@ -78,6 +92,16 @@ public class RoundRobin {
 			int score2 = finishedMat.getScore2();
 			matchTracker[t1ID][t2ID]=score1;
 			matchTracker[t2ID][t1ID]=score2;
+
+//			double halfwayPt = Math.floor((idleTeams.size()-1)/2);//Use this for inserting idle teams
+				if(t1ID>t2ID){
+					idleTeams.offerFirst(t1ID);//Change this in the future. 
+					idleTeams.offerLast(t2ID);
+				}
+				else{
+					idleTeams.offerFirst(t2ID);//Change this in the future. 
+					idleTeams.offerLast(t1ID);					
+				}
 		}
 	}
 	public static Match matchTeam(int team1,int team2){
@@ -138,10 +162,11 @@ public class RoundRobin {
 		for(int i=0;i<idleTeams.size();i++){
 			int t1ID=idleTeams.get(i);
 			for(int j=i;j<idleTeams.size();j++){
-				System.out.println(i+" "+j);
 				int t2ID=idleTeams.get(j);
 				if(matchTracker[t1ID][t2ID] == -1 || matchTracker[t2ID][t1ID] == -1){
-					System.out.println("MATCH");
+					if(j==idleTeams.size()-1){
+						i=i-1;
+					}
 					matchTracker[t1ID][t2ID]=0;
 					matchTracker[t2ID][t1ID]=0;
 					matchup();
