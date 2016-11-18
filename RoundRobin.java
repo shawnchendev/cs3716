@@ -12,6 +12,7 @@ import java.util.Queue;
  * Step 6a: Ensure that teams aren't matched up again immediately
  * Step 6b: Put the scores of finished matches into stat tracker 
  * Step 7: Continue matchplay by pairing teams up into new matches 
+ * 
 */
 public class RoundRobin {
 	//This is all temporarily static. 
@@ -32,17 +33,28 @@ public class RoundRobin {
 			Arrays.fill(matchTracker[i], -1);
 			matchTracker[i][i]=0;
 		}
-		//printMatchTracker();
-		printIdleTeamList();
-		checkMatchup();
-		//printMatchTracker();
-		printIdleTeamList();
-		playMatch(matches,currentMatches);
-		endMatch(oldMatches,currentMatches,0);
-		playMatch(matches,currentMatches);
-		printIdleTeamList();
-		//printMatchTracker();
+		printMatchTracker();
+		boolean verdict = false;
 		
+		while(verdict==false){
+			checkMatchup();
+			playMatch();
+			endMatch(0);
+			playMatch();
+			boolean check = true;
+			for(int i=0;i<teamQuantity-1;i++){
+				for(int j=0;j<teamQuantity-1;j++){
+					if(matchTracker[i][j]==-1){
+						check=false;
+					}
+				}
+			}
+			if(check==true){
+				System.out.println("Exiting");
+				verdict=true;
+			}
+		}
+		printMatchTracker();
 	}
 	public static void printIdleTeamList(){
 		System.out.println("IDLE TEAM LIST-------");
@@ -63,6 +75,7 @@ public class RoundRobin {
 				System.out.println("Match "+i+": "+t1+" "+t2);
 			}
 		}
+		System.out.println();
 	}
 	public static void printMatchTracker(){
 		for(int j=0;j<teamQuantity;j++){
@@ -75,17 +88,20 @@ public class RoundRobin {
 	public void queueTeams(Queue<Integer> tq,int[][] mt){
 		
 	}
-	public static void playMatch(LinkedList<Match> mat,LinkedList<Match> currMat){
-		if(mat.size()>0){
-			currMat.add(mat.remove());
+	public static void playMatch(){
+		if(matches.size()>0){
+			System.out.println("++MATCH STARTED++");
+			currentMatches.add(matches.remove());
 		}
 	}
-	public static void endMatch(LinkedList<Match> oldMat,LinkedList<Match> currMat,int i){
+	public static void endMatch(int matchID){
 		//Ask for the scores here? Or have it added elsewhere and have it stored in object for 
 		//future use?
-		if(currMat.size()>0){
-			Match finishedMat = currMat.remove(i);
-			oldMat.add(finishedMat);
+		if(currentMatches.size()>0 && matchID < currentMatches.size()){
+			System.out.println("--MATCH ENDED--");
+			Match finishedMat = currentMatches.remove(matchID);
+			
+			oldMatches.add(finishedMat);
 			int t1ID = finishedMat.getTeam1();
 			int t2ID = finishedMat.getTeam2();
 			int score1 = finishedMat.getScore1();
@@ -95,13 +111,16 @@ public class RoundRobin {
 
 //			double halfwayPt = Math.floor((idleTeams.size()-1)/2);//Use this for inserting idle teams
 				if(t1ID>t2ID){
-					idleTeams.offerFirst(t1ID);//Change this in the future. 
+					idleTeams.offerFirst(t1ID);//Change this to insert halfway
 					idleTeams.offerLast(t2ID);
 				}
 				else{
-					idleTeams.offerFirst(t2ID);//Change this in the future. 
+					idleTeams.offerFirst(t2ID);//Change this to insert halfway
 					idleTeams.offerLast(t1ID);					
 				}
+		}
+		else{
+			System.out.println("Match does not exist");
 		}
 	}
 	public static Match matchTeam(int team1,int team2){
@@ -120,7 +139,7 @@ public class RoundRobin {
 		
 		System.out.println("----------------");
 		
-		playMatch(matches,currentMatches);
+		playMatch();
 		
 		System.out.println("Old Matches");
 		printList(oldMatches);
@@ -132,11 +151,11 @@ public class RoundRobin {
 		printList(currentMatches);
 		
 		
-		endMatch(oldMatches,currentMatches,0);
+		endMatch(0);
 		
 		System.out.println("----------------");
 		
-		playMatch(matches,currentMatches);
+		playMatch();
 		
 		System.out.println("Old Matches");
 		printList(oldMatches);
@@ -151,6 +170,7 @@ public class RoundRobin {
 		int t1ID=idleTeams.get(0);
 		int t2ID=idleTeams.get(1);
 		if(matchTracker[t1ID][t2ID]>=0 && matchTracker[t2ID][t1ID]>=0){
+			System.out.println("(MATCH QUEUED)");
 			Match m=matchTeam(t1ID,t2ID);
 			idleTeams.pop();
 			idleTeams.pop();
@@ -158,18 +178,17 @@ public class RoundRobin {
 		}
 	}
 	public static void checkMatchup(){
-		
 		for(int i=0;i<idleTeams.size();i++){
 			int t1ID=idleTeams.get(i);
 			for(int j=i;j<idleTeams.size();j++){
 				int t2ID=idleTeams.get(j);
 				if(matchTracker[t1ID][t2ID] == -1 || matchTracker[t2ID][t1ID] == -1){
-					if(j==idleTeams.size()-1){
-						i=i-1;
-					}
 					matchTracker[t1ID][t2ID]=0;
 					matchTracker[t2ID][t1ID]=0;
 					matchup();
+					if(j==idleTeams.size()-1){
+						i=i-1;
+					}
 				}
 			}
 		}
