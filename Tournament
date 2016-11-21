@@ -1,0 +1,179 @@
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+public class Tournament{
+  
+  private int maxEntrants, minEntrants, numOfEntrants, maxTeamSize, minTeamSize, numOfCourts;
+  private String tournaName;
+  private TournamentFormat format;
+  private ArrayList<Team> teamList;
+  SimpleDateFormat sdf = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
+  Calendar dayStartTime, dayEndTime, deadline;
+  
+  //Create empty tournament
+  public Tournament(){
+      
+      this.teamList = new ArrayList<Team>();
+      this.dayStartTime = new GregorianCalendar();
+      this.dayEndTime = new GregorianCalendar();
+      this.deadline = new GregorianCalendar();
+  }
+      
+  public Tournament(String tournaName, TournamentFormat format, int minEntrants, int maxEntrants, int minTeamSize, int maxTeamSize, int numOfCourts, int numOfEntrants){
+    this.teamList = new ArrayList<Team>();
+    this.tournaName = tournaName;
+    this.format = format;
+    this.minEntrants = minEntrants;
+    this.maxEntrants = maxEntrants;
+    this.minTeamSize = minTeamSize;
+    this.maxTeamSize = maxTeamSize;
+    this.numOfCourts = numOfCourts;
+    this.dayStartTime = new GregorianCalendar();
+    this.dayEndTime = new GregorianCalendar();
+    this.deadline = new GregorianCalendar();
+    this.numOfEntrants = 0;
+  }
+
+  
+  //get methods
+  public String getTournaName(){
+    return this.tournaName;
+  }
+  
+  public TournamentFormat getFormat(){
+    return this.format;
+  }
+  
+  public int getMinEntrants(){
+    return this.minEntrants;
+  }
+  
+  public int getMaxEntrants(){
+    return this.maxEntrants;
+  }
+  
+  public int getNumOfEntrants(){
+    return this.numOfEntrants;
+  }
+  
+  public int getMinTeamSize(){
+    return this.minTeamSize;
+  }
+  
+  public int getMaxTeamSize(){
+    return this.maxTeamSize;
+  }
+  
+  public int getNumOfCourts(){
+    return this.numOfCourts;
+  }
+  
+ public void getDayStartTime(){
+   System.out.println("Tournament begins on " + sdf.format(dayStartTime.getTime()));
+  }
+  
+  public void getDayEndTime(){
+    System.out.println("Tournament ends on " + sdf.format(dayEndTime.getTime()));
+  }
+  
+  public void getDeadline(){
+    System.out.println("Tournament registration ends on " + sdf.format(deadline.getTime()));
+  }
+  
+  
+  
+  // set methods
+  public void setTournaName(String newTournaName){
+    this.tournaName = newTournaName;
+  }
+  
+  public void setFormat(TournamentFormat newFormat){
+    this.format = newFormat;
+  }
+  
+  public void setMinEntrants(int newMinEntrants){
+    this.minEntrants = newMinEntrants;
+  }
+  
+  public void setMaxEntrants(int newMaxEntrants){
+    this.maxEntrants = newMaxEntrants;
+  }
+  
+  public void setNumOfEntrants(int newNumOfEntrants){
+    this.numOfEntrants = newNumOfEntrants;
+  }
+  
+  public void setMinTeamSize(int newMinTeamSize){
+    this.minTeamSize = newMinTeamSize;
+  }
+  
+  public void setMaxTeamSize(int newMaxTeamSize){
+    this.maxTeamSize = newMaxTeamSize;
+  }
+  
+  public void setNumOfCourts(int newNumOfCourts){
+    this.numOfCourts = newNumOfCourts;
+  }
+  
+  public void setDayStartTime(int year, int month, int day, int hour, int minute, int second){
+    dayStartTime.set(Calendar.YEAR, year);
+    dayStartTime.set(Calendar.MONTH, month);
+    dayStartTime.set(Calendar.DAY_OF_MONTH, day);
+    dayStartTime.set(Calendar.HOUR, hour);
+    dayStartTime.set(Calendar.MINUTE, minute);
+    dayStartTime.set(Calendar.SECOND, second);
+  }
+  
+  public void setDayEndtime(int year, int month, int day, int hour, int minute, int second){
+    dayEndTime.set(Calendar.YEAR, year);
+    dayEndTime.set(Calendar.MONTH, month);
+    dayEndTime.set(Calendar.DAY_OF_MONTH, day);
+    dayEndTime.set(Calendar.HOUR, hour);
+    dayEndTime.set(Calendar.MINUTE, minute);
+    dayEndTime.set(Calendar.SECOND, second);
+  }
+  
+   public void setDeadline(int year, int month, int day, int hour, int minute, int second){
+    deadline.set(Calendar.YEAR, year);
+    deadline.set(Calendar.MONTH, month);
+    deadline.set(Calendar.DAY_OF_MONTH, day);
+    deadline.set(Calendar.HOUR, hour);
+    deadline.set(Calendar.MINUTE, minute);
+    deadline.set(Calendar.SECOND, second);
+  }
+  
+  
+  
+  
+  public void registerTeam(Team team){
+    
+    // create instance of current date to check registration deadline.
+    Calendar currentDate = Calendar.getInstance();
+    
+    if(teamList.contains(team)){
+      System.out.println("Team is already registered.");
+    }
+    if(numOfEntrants == maxEntrants){
+      System.out.println("Maximum number of teams for this tournament has been reached.");
+    }
+    if(deadline.before(currentDate)){
+        System.out.println("Registration for this tournament has ended.");
+    }
+    else{
+        teamList.add(team);
+        numOfEntrants++;
+    }
+  }
+  
+  public void removeTeam(Team team){
+    if(teamList.contains(team)){
+      teamList.remove(team);
+      numOfEntrants--;
+    }
+    else{
+      System.out.println("Team does not exist.");
+    }
+  }
+  
+
+}
