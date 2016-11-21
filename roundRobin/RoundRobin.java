@@ -26,7 +26,7 @@ public class RoundRobin {
 	static LinkedList<Integer> idleTeams = new LinkedList<Integer>();
 	static int[] matchFreq;
 	public static void main(String[]args){
-		teamQuantity = 15;
+		teamQuantity = 50;
 		matchTracker = new int[teamQuantity][teamQuantity];
 		matchFreq=new int[teamQuantity];
 		for(int i = 0;i<teamQuantity;i++){
@@ -46,41 +46,52 @@ public class RoundRobin {
 			checkMatchup();
 			endMatch(0);
 			boolean check = true;
-			int a=1;
 			for(int i=0;i<teamQuantity;i++){
 				for(int j=0;j<teamQuantity;j++){
-					if(matchTracker[i][j]==-1 || matchTracker[i][j] == -3){
+					if(matchTracker[i][j] == -1 || matchTracker[i][j] == -3 || matchTracker[i][j] == -4){
 						check=false;
 					}
 				}
 			}
-			if(check==true){
-				System.out.println("Exiting");
-				verdict=true;
-			}
-			System.out.println(Arrays.toString(matchFreq));
+		System.out.println(Arrays.toString(matchFreq));
+		printIdleTeamList();
+		printList(matches);
+		printMatchTracker();
+		if(check==true){
+			verdict=true;
 		}
+		}
+		System.out.println(Arrays.toString(matchFreq));
 		printIdleTeamList();
 		printMatchTracker();
+		printList(matches);
 	}
 	
 	
 	public static void checkMatchup(){
+		if(idleTeams.size()>1){
 		for(int i=0;i<idleTeams.size();i++){
-			int t1ID=idleTeams.get(i);
-			for(int j=i;j<idleTeams.size();j++){
-				int t2ID=idleTeams.get(j);
-				if(matchTracker[t1ID][t2ID] == -1 && matchTracker[t2ID][t1ID] == -1 && idleTeams.size()>1){
-					int T1ID=idleTeams.remove(j);
-					int T2ID=idleTeams.remove(i);
+			for(int j=i+1;j<idleTeams.size();j++){;
+				int t1ID=idleTeams.remove(j);
+				int t2ID=idleTeams.remove(i);
+				if(matchTracker[t1ID][t2ID] == -1 && matchTracker[t2ID][t1ID] == -1){
+					printMatchTracker();
 					matchTracker[t1ID][t2ID]=-3;
 					matchTracker[t2ID][t1ID]=-3;
-					matchup(T1ID,T2ID);
+					matchup(t1ID,t2ID);
 					if(j==idleTeams.size()-1){
 						i=i-1;
 					}
 				}
+				else{
+					idleTeams.offerFirst(t1ID);
+					idleTeams.offerFirst(t2ID);
+				}
 			}
+		}
+		}
+		else{
+			System.out.println("No teams left to matchup");
 		}
 	}
 	public static void matchup(int t1ID,int t2ID){
@@ -91,7 +102,14 @@ public class RoundRobin {
 	public static void playMatch(){
 		if(matches.size()>0){
 			//System.out.println("++MATCH STARTED++");
+			Match m = matches.get(0);
+			int t1ID = m.getTeam1();
+			int t2ID = m.getTeam2();
+			matchTracker[t1ID][t2ID]=-4;
 			currentMatches.add(matches.remove());
+		}
+		else{
+			System.out.println("No new matches to play");
 		}
 	}
 	public static void endMatch(int matchID){
