@@ -7,14 +7,13 @@ public class tournament {
 private tournamentType type;
 private String location;
 private Date deadline;
-private ArrayList<team> teams = new ArrayList<team>();
+private ArrayList<team>  teams
 
-public tournament(tournamentType type, String location, Date deadline, ArrayList<team> teams) {
-	super();
+public tournament(tournamentType type, String location, Date deadline) {
 	this.type = type;
 	this.location = location;
 	this.deadline = deadline;
-	this.teams = teams;
+	teams = new ArrayList<team>();
 }
 
 public tournamentType getType() {
